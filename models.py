@@ -6,7 +6,7 @@ class User(db.Model):
     user_phone = db.Column(db.String(20), unique=True)
     is_subbed = db.Column(db.Boolean, default=True)
     is_admin = db.Column(db.Boolean, default=False)
-    user_did = db.Relationship('DID', backref='user', lazy='dynamic')
+    user_did = db.relationship('DID', backref='user', lazy='dynamic')
 
     def __init__(self, nick, user_phone, user_did):
         self.nick = nick
