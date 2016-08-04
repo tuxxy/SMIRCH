@@ -20,7 +20,7 @@ def main():
                     "Subscribe to the Mojave SMS IRC by texting '@subscribe <nick>'")
         return json.dumps({'status': 'Call received'})
     else:
-        elif message[0].lower() == '@unsub':
+        if message[0].lower() == '@unsub':
             return unsub_user(sender)
         elif message[0].lower() == '@resub':
             return resub_user(sender)
@@ -28,6 +28,8 @@ def main():
             return priv_msg(message[0][1:].lower(), message[1:], sender)
         elif message[0].lower() == '@help':
             return send_help(sender)
+        else:
+            return relay_sms(message, sender)
     return json.dumps({'status': 'Call received'})
 
 
@@ -76,6 +78,7 @@ def priv_msg(nick, message, sender):
         if user.did:
             message = "PRIV~<{}> {}".format(sender.nick, ' '.join(message))
             teli.send_sms(int(user.user_phone), message, src=user.did.number)
+    return json.dumps({'status': 'Call received'})
 
 
 def send_help(user):
@@ -89,11 +92,9 @@ def relay_sms(message, sender):
         for user in User.query.filter_by(is_subbed=True):
             # Don't send the sender the same message
             if sender != user:
-                message = ' '.join(message)
-                teli.send_sms(int(user.user_phone), "<{}> {}".format(nick, message),
-                        src=int(user.did.number))
+                message = "<{}> {}".format(user.nick, ' '.join(message))
+                teli.send_sms(int(user.user_phone), message, src=int(user.did.number))
     else:
         teli.send_sms(int(sender.user_phone),
-                "You are not subscribed. Text 'subscribe' to rejoin the chat.",
-                src=int(sender.did.number))
+                "You are not subscribed. Text '@resub' to rejoin the chat.")
     return json.dumps({'status': 'Call received'})
