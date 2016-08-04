@@ -68,6 +68,8 @@ def resub_user(user):
         else:
             user.did = did
     user.is_subbed = True
+    db.session.add(user)
+    db.session.commit()
     teli.send_sms(int(user.user_phone), "Rejoined chat!")
     return json.dumps({'status': 'Call received'})
 
