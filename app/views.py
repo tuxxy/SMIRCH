@@ -20,14 +20,14 @@ def main():
                     "Subscribe to the Mojave SMS IRC by texting '@subscribe <nick>'")
         return json.dumps({'status': 'Call received'})
     else:
-        if message[0].lower() == '@unsub':
+        if message[0].lower() == '/quit' or message[0].lower() == '/away':
             return unsub_user(sender)
-        elif message[0].lower() == '@resub':
+        elif message[0].lower() == '/resub':
             return resub_user(sender)
+        elif message[0].lower() == '/help':
+            return send_help(sender)
         elif message[0].lower()[0] == '@':
             return priv_msg(message[0][1:].lower(), message[1:], sender)
-        elif message[0].lower() == '@help':
-            return send_help(sender)
         else:
             return relay_sms(message, sender)
     return json.dumps({'status': 'Call received'})
@@ -43,7 +43,7 @@ def subscribe_user(message, src):
             db.session.add(new_user)
             db.session.commit()
             teli.send_sms(int(new_user.user_phone),
-                    "Welcome to Mojave SMS IRC for DEFCON 24!\nWritten by @__tux for the Mojave!\nText '@help' for commands.",
+                    "Welcome to Mojave SMS IRC for DEFCON 24!\nWritten by @__tux for the Mojave!\nText '/help' for commands.",
                     src=int(new_user.did.number))
     return json.dumps({'status': 'Call received'})
 
@@ -54,7 +54,7 @@ def unsub_user(user):
         user.did = None # Release the DID for others, unless you're an admin
     db.session.add(user)
     db.session.commit()
-    teli.send_sms(int(user.user_phone), "Unsubbed from chat. Reply with '@resub' to rejoin!")
+    teli.send_sms(int(user.user_phone), "Unsubbed from chat. Reply with '/resub' to rejoin!")
     return json.dumps({'status': 'Call received'})
 
 
@@ -85,7 +85,7 @@ def priv_msg(nick, message, sender):
 
 def send_help(user):
     teli.send_sms(int(user.user_phone),
-            "@help - Displays this menu\n@<nick> <message> - Private message user\n@unsub - Unsubs from chat\n@resub - Resubscribes to chat\n@about - Displays info about the software")
+            "/help - Displays this menu\n@<nick> <message> - Private message user\n/quit OR /away - Unsubs from chat\n/resub - Resubscribes to chat\n/about - Displays info about the software")
     return json.dumps({'status': 'Call received'})
 
 
@@ -98,5 +98,5 @@ def relay_sms(message, sender):
                 teli.send_sms(int(user.user_phone), message, src=int(user.did.number))
     else:
         teli.send_sms(int(sender.user_phone),
-                "You are not subscribed. Text '@resub' to rejoin the chat.")
+                "You are not subscribed. Text '/resub' to rejoin the chat.")
     return json.dumps({'status': 'Call received'})
