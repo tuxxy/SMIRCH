@@ -24,13 +24,15 @@ def main():
             return unsub_user(sender)
         elif message[0].lower() == '@resub':
             return resub_user(sender)
+        elif message[0].lower()[0] == '@':
+            return priv_msg(message[0][1:].lower(), message[1:], sender)
         elif message[0].lower() == '@help':
             return send_help(sender)
     return json.dumps({'status': 'Call received'})
 
 
 def subscribe_user(message, src):
-    nick = re.sub('[^A-Za-z0-9_-]+', '', message[1])
+    nick = re.sub('[^A-Za-z0-9_-]+', '', message[1]).lower()
     if len(nick) >= 2:
         # Grab the first available DID
         did = DID.query.filter_by(user_id=None).first()
@@ -65,6 +67,14 @@ def resub_user(user):
     user.is_subbed = True
     teli.send_sms(int(user.user_phone), "Rejoined chat!")
     return json.dumps({'status': 'Call received'})
+
+
+def priv_msg(nick, message, sender):
+    user = User.query.filter_by(nick=nick).first()
+    if user:
+        if user.did:
+            message = "PRIV~<{}> {}".format(sender.nick, ' '.join(message))
+            teli.send_sms(int(user.user_phone), message, src=user.did.number)
 
 
 def send_help(user):
