@@ -52,6 +52,7 @@ def unsub_user(user):
         user.did = None # Release the DID for others, unless you're an admin
     db.session.add(user)
     db.session.commit()
+    teli.send_sms(int(user.user_phone), "Unsubbed from chat. Reply with '@resub' to rejoin!")
     return json.dumps({'status': 'Call received'})
 
 
