@@ -105,7 +105,7 @@ def list_users(sender):
 
 def send_help(user):
     teli.send_sms(int(user.user_phone),
-            "/help - Displays this menu\n@<nick> <message> - Private message user\n/quit OR /away - Unsubs from chat\n/resub - Resubscribes to chat\n/about - Displays info about the software")
+            "/help - Displays this menu\n@<nick> <message> - Private message user\n/quit OR /away - Unsubs from chat\n/resub - Resubscribes to chat\n/list - Lists users in chat\n/about - Displays info about the software")
     return json.dumps({'status': 'Call received'})
 
 
