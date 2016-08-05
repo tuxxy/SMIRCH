@@ -13,11 +13,11 @@ def main():
     message = request.form.get('message').split(' ')
     sender = User.query.filter_by(user_phone=request.form.get('source')).first()
     if sender is None:
-        if message[0].lower() == '@subscribe' and len(message) >= 2:
+        if message[0].lower() == 'subscribe' and len(message) >= 2:
             return subscribe_user(message, request.form.get('source'))
         else:
             teli.send_sms(int(request.form.get('source')),
-                    "Subscribe to the Mojave SMS IRC by texting '@subscribe <nick>'")
+                    "Subscribe to the Mojave SMS IRC by texting 'subscribe <nick>'")
         return json.dumps({'status': 'Call received'})
     else:
         if message[0].lower() == '/quit' or message[0].lower() == '/away':
