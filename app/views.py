@@ -25,7 +25,7 @@ def main():
         elif message[0].lower() == '/quit' or message[0].lower() == '/away':
             return unsub_user(sender)
         elif message[0].lower() == '/resub':
-            return resub_user(sender)
+            return resub_user(sender, request.form.get('destination'))
         elif message[0].lower() == '/list':
             return list_users(sender)
         elif message[0].lower() == '/about':
@@ -62,15 +62,20 @@ def unsub_user(user):
     return json.dumps({'status': 'Call received'})
 
 
-def resub_user(user):
+def resub_user(user, pref_did):
     # Admins get to keep their DID
     if not user.is_admin:
-        did = DID.query.filter_by(user=None).first()
-        if did is None:
-            teli.send_sms(int(user.user_phone), "This chat is full, try again later.")
-            return json.dumps({'status': 'Call received'})
-        else:
+        did = DID.query.filter_by(number=pref_did).first()
+        # If someone isn't assigned the DID, use the preferred one.
+        if did.user is None:
             user.did = did
+        else:
+            did = DID.query.filter_by(user=None).first()
+            if did is None:
+                teli.send_sms(int(user.user_phone), "This chat is full, try again later.")
+                return json.dumps({'status': 'Call received'})
+            else:
+                user.did = did
     user.is_subbed = True
     db.session.add(user)
     db.session.commit()
