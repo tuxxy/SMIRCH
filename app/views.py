@@ -20,16 +20,18 @@ def main():
                     "Subscribe to the Mojave SMS IRC by texting 'subscribe <nick>'")
         return json.dumps({'status': 'Call received'})
     else:
-        if message[0].lower() == '/quit' or message[0].lower() == '/away':
+        if message[0].lower()[0] == '@':
+            return priv_msg(message[0][1:].lower(), message[1:], sender)
+        elif message[0].lower() == '/quit' or message[0].lower() == '/away':
             return unsub_user(sender)
         elif message[0].lower() == '/resub':
             return resub_user(sender)
-        elif message[0].lower() == '/help':
-            return send_help(sender)
-        elif message[0].lower()[0] == '@':
-            return priv_msg(message[0][1:].lower(), message[1:], sender)
+        elif message[0].lower() == '/list':
+            return list_users(sender)
         elif message[0].lower() == '/about':
             return send_about(sender)
+        elif message[0].lower() == '/help':
+            return send_help(sender)
         else:
             return relay_sms(message, sender)
     return json.dumps({'status': 'Call received'})
@@ -82,6 +84,17 @@ def priv_msg(nick, message, sender):
         if user.did:
             message = "PRIV~<{}> {}".format(sender.nick, ' '.join(message))
             teli.send_sms(int(user.user_phone), message, src=user.did.number)
+    return json.dumps({'status': 'Call received'})
+
+
+def list_users(sender):
+    users = User.query.filter_by(is_subbed=True)
+    subbed_users = []
+    for user in users:
+        subbed_users.append(user.nick)
+    message = "\n".join(subbed_users)
+    message += "\nTotal count: {}".format(len(subbed_users))
+    teli.send_sms(int(sender.user_phone), message)
     return json.dumps({'status': 'Call received'})
 
 
