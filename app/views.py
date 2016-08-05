@@ -91,10 +91,10 @@ def send_help(user):
 
 def relay_sms(message, sender): 
     if sender.is_subbed:
+        message = "<{}> {}".format(sender.nick, ' '.join(message))
         for user in User.query.filter_by(is_subbed=True):
             # Don't send the sender the same message
             if sender != user:
-                message = "<{}> {}".format(sender.nick, ' '.join(message))
                 teli.send_sms(int(user.user_phone), message, src=int(user.did.number))
     else:
         teli.send_sms(int(sender.user_phone),
