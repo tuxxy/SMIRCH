@@ -13,8 +13,8 @@ This software is in use for Mojave Payphone (760.733.9969) as a chat service for
 Feel free to join the chat and have fun with everyone!
 
 # TODO
-* Allow MMS messages
 * Make feature requests, pls
+* See the Issue tracker
 
 # LICENSE
 SMIRCH is licensed under the AGPLv3. See the LICENSE file for details.
