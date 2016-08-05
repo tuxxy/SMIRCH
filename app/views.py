@@ -28,6 +28,8 @@ def main():
             return send_help(sender)
         elif message[0].lower()[0] == '@':
             return priv_msg(message[0][1:].lower(), message[1:], sender)
+        elif message[0].lower() == '/about':
+            return send_about(sender)
         else:
             return relay_sms(message, sender)
     return json.dumps({'status': 'Call received'})
@@ -86,6 +88,12 @@ def priv_msg(nick, message, sender):
 def send_help(user):
     teli.send_sms(int(user.user_phone),
             "/help - Displays this menu\n@<nick> <message> - Private message user\n/quit OR /away - Unsubs from chat\n/resub - Resubscribes to chat\n/about - Displays info about the software")
+    return json.dumps({'status': 'Call received'})
+
+
+def send_about(user):
+    teli.send_sms(int(user.user_phone),
+            "SMIRCH is AGPLv3 software written in Python with Teli.net!.\nhttps://github.com/tuxxy/SMIRCH/\nAuthor: https://twitter.com/__tux")
     return json.dumps({'status': 'Call received'})
 
 
