@@ -117,7 +117,10 @@ def send_about(user):
 
 def relay_sms(message, sender): 
     if sender.is_subbed:
-        message = "<{}> {}".format(sender.nick, ' '.join(message))
+        if message[0].lower() == '/me' and len(message) >= 2:
+            message = "* {} {}".format(sender.nick, ' '.join(message[1:]))
+        else:
+            message = "<{}> {}".format(sender.nick, ' '.join(message))
         for user in User.query.filter_by(is_subbed=True):
             # Don't send the sender the same message
             if sender != user:
