@@ -4,8 +4,8 @@ from api import Teli
 from models import User, DID
 import re
 
-teli = Teli(app.config['TELI_TOKEN'], app.config['TELI_DID'])
 
+teli = Teli(app.config['TELI_TOKEN'], app.config['TELI_DID'])
 
 @app.route('/', methods=['POST'])
 def main():
