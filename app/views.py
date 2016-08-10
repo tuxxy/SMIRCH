@@ -151,3 +151,9 @@ def relay_sms(message, sender):
         teli.send_sms(int(sender.user_phone),
                 "You are not subscribed. Text '/resub' to rejoin the chat.")
     return json.dumps({'status': 'Call received'})
+
+
+def system_sms(message):
+    for user in User.query.filter_by(is_subbed=True):
+        teli.send_sms(int(user.user_phone), message, src=int(user.did.number))
+    return json.dumps({'status': 'Call received'})
