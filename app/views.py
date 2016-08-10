@@ -35,7 +35,7 @@ def main():
             return send_help(sender)
         elif message[0].lower() == '/topic':
             if len(message) >= 2:
-                return set_topic(sender, message))
+                return set_topic(sender, message)
             else:
                 return json.dumps({'status': 'Invalid length'})
         else:
