@@ -37,7 +37,7 @@ def main():
             if len(message) >= 2:
                 return set_topic(sender, message)
             else:
-                return json.dumps({'status': 'Invalid length'})
+                return view_topic(sender)
         else:
             return relay_sms(message, sender)
     return json.dumps({'status': 'Call received'})
@@ -121,6 +121,11 @@ def set_topic(sender, message):
         TOPIC = ' '.join(message[1:])
         new_message = "/me has changed the topic to: {}".format(TOPIC).split(' ')
         relay_sms("/me has changed the topic to: {}".format(new_message), sender)
+    return json.dumps({'status': 'Call received'})
+
+
+def view_topic(sender):
+    teli.send_sms(int(sender.user_phone), TOPIC, src=sender.did.number)
     return json.dumps({'status': 'Call received'})
 
 
