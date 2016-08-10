@@ -6,6 +6,7 @@ import re
 
 
 teli = Teli(app.config['TELI_TOKEN'], app.config['TELI_DID'])
+TOPIC = ""
 
 @app.route('/', methods=['POST'])
 def main():
@@ -32,6 +33,11 @@ def main():
             return send_about(sender)
         elif message[0].lower() == '/help':
             return send_help(sender)
+        elif message[0].lower() == '/topic':
+            if len(message) >= 2:
+                return set_topic(sender, ' '.join(message[1:]))
+            else:
+                return json.dumps({'status': 'Invalid length'})
         else:
             return relay_sms(message, sender)
     return json.dumps({'status': 'Call received'})
@@ -47,7 +53,7 @@ def subscribe_user(message, src):
             db.session.add(new_user)
             db.session.commit()
             teli.send_sms(int(new_user.user_phone),
-                    "Welcome to Mojave SMS IRC for DEFCON 24!\nWritten by @__tux for the Mojave!\nText '/help' for commands.",
+                    "Topic: {}\nText '/help' for commands.".format(TOPIC),
                     src=int(new_user.did.number))
     return json.dumps({'status': 'Call received'})
 
@@ -106,6 +112,15 @@ def list_users(sender):
 def send_help(user):
     teli.send_sms(int(user.user_phone),
             "/help - Displays this menu\n@<nick> <message> - Private message user\n/quit OR /away - Unsubs from chat\n/resub - Resubscribes to chat\n/list - Lists users in chat\n/about - Displays info about the software")
+    return json.dumps({'status': 'Call received'})
+
+
+def set_topic(sender, new_topic):
+    global TOPIC
+    if sender.is_admin:
+        TOPIC = new_topic
+        relay_sms("{} has changed the topic to: {}".format(sender.nick, TOPIC),
+                sender)
     return json.dumps({'status': 'Call received'})
 
 
