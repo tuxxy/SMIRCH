@@ -140,6 +140,7 @@ def set_nick(sender, message):
         sender.nick = new_nick
         db.session.add(sender)
         db.session.commit()
+        system_sms(message)
     else:
         teli.send_sms(int(sender.user_phone), "Nick already in use.",
                 src=int(sender.did.number))
