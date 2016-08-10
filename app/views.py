@@ -122,7 +122,7 @@ def set_topic(sender, message):
     if sender.is_admin:
         TOPIC = ' '.join(message[1:])
         new_message = "/me has changed the topic to: {}".format(TOPIC).split(' ')
-        relay_sms("/me has changed the topic to: {}".format(new_message), sender)
+        relay_sms("{}".format(new_message), sender)
     return json.dumps({'status': 'Call received'})
 
 
