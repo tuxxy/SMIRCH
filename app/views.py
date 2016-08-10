@@ -11,7 +11,7 @@ TOPIC = ""
 @app.route('/', methods=['POST'])
 def main():
     # subscribe <nick>
-    message = request.form.get('message').split(' ')
+    message = request.form.get('message').strip().split(' ')
     if not len(message) > 1:
         return json.dumps({'status': 'Invalid length'})
     sender = User.query.filter_by(user_phone=request.form.get('source')).first()
