@@ -126,7 +126,7 @@ def set_topic(sender, message):
     global TOPIC
     if sender.is_admin:
         TOPIC = ' '.join(message[1:])
-        system_sms('Topic has changed to: {}'.format(TOPIC))
+        system_sms('{} has changed the topic to: {}'.format(sender.nick, TOPIC))
     return json.dumps({'status': 'Call received'})
 
 
