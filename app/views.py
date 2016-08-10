@@ -40,6 +40,8 @@ def main():
                 return set_topic(sender, message)
             else:
                 return view_topic(sender)
+        elif message[0].lower() == '/nick':
+            return set_nick(sender, message)
         else:
             return relay_sms(message, sender)
     return json.dumps({'status': 'Call received'})
@@ -126,7 +128,21 @@ def set_topic(sender, message):
 
 
 def view_topic(sender):
-    teli.send_sms(int(sender.user_phone), TOPIC, src=sender.did.number)
+    teli.send_sms(int(sender.user_phone), TOPIC, src=int(sender.did.number))
+    return json.dumps({'status': 'Call received'})
+
+
+def set_nick(sender, message):
+    if len(message) >= 2:
+        new_nick = message[1].lower()
+    if not User.query.filter_by(nick=new_nick).first():
+        message = "{} has changed their nick to: {}".format(sender.nick, new_nick)
+        sender.nick = new_nick
+        db.session.add(sender)
+        db.session.commit()
+    else:
+        teli.send_sms(int(sender.user_phone), "Nick already in use.",
+                src=int(sender.did.number))
     return json.dumps({'status': 'Call received'})
 
 
