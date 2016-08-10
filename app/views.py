@@ -59,6 +59,7 @@ def subscribe_user(message, src):
             teli.send_sms(int(new_user.user_phone),
                     "Topic: {}\nText '/help' for commands.".format(TOPIC),
                     src=int(new_user.did.number))
+            system_sms("{} has joined the chat!".format(new_user.nick))
     return json.dumps({'status': 'Call received'})
 
 
@@ -69,6 +70,7 @@ def unsub_user(user):
     db.session.add(user)
     db.session.commit()
     teli.send_sms(int(user.user_phone), "Unsubbed from chat. Reply with '/resub' to rejoin!")
+    system_sms("{} has quit the chat.".format(user.nick))
     return json.dumps({'status': 'Call received'})
 
 
@@ -90,6 +92,7 @@ def resub_user(user, pref_did):
     db.session.add(user)
     db.session.commit()
     teli.send_sms(int(user.user_phone), "Rejoined chat!")
+    system_sms("{} has joined the chat!".format(user.nick))
     return json.dumps({'status': 'Call received'})
 
 
