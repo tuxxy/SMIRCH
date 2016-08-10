@@ -12,6 +12,8 @@ TOPIC = ""
 def main():
     # subscribe <nick>
     message = request.form.get('message').split(' ')
+    if not len(message) > 1:
+        return json.dumps({'status': 'Invalid length'})
     sender = User.query.filter_by(user_phone=request.form.get('source')).first()
     if sender is None:
         if message[0].lower() == 'subscribe' and len(message) >= 2:
