@@ -35,7 +35,7 @@ def main():
             return send_help(sender)
         elif message[0].lower() == '/topic':
             if len(message) >= 2:
-                return set_topic(sender, ' '.join(message[1:]))
+                return set_topic(sender, message))
             else:
                 return json.dumps({'status': 'Invalid length'})
         else:
@@ -115,12 +115,12 @@ def send_help(user):
     return json.dumps({'status': 'Call received'})
 
 
-def set_topic(sender, new_topic):
+def set_topic(sender, message):
     global TOPIC
     if sender.is_admin:
-        TOPIC = new_topic
-        relay_sms("{} has changed the topic to: {}".format(sender.nick, TOPIC),
-                sender)
+        TOPIC = ' '.join(message[1:])
+        new_message = "/me has changed the topic to: {}".format(TOPIC).split(' ')
+        relay_sms("/me has changed the topic to: {}".format(new_message), sender)
     return json.dumps({'status': 'Call received'})
 
 
