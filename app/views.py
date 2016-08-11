@@ -77,7 +77,7 @@ def resub_user(user, pref_did):
     if not user.is_admin:
         did = DID.query.filter_by(number=pref_did).first()
         # If someone isn't assigned the DID, use the preferred one.
-        if did.user is None:
+        if did.user is None and pref_did != app.config['TELI_DID']:
             user.did = did
         else:
             did = DID.query.filter_by(user=None).first()
