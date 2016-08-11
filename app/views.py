@@ -136,7 +136,7 @@ def view_topic(sender):
 def set_nick(sender, message):
     if len(message) >= 2:
         new_nick = re.sub('[^A-Za-z0-9_-]+', '', message[1]).lower()
-    if not User.query.filter_by(nick=new_nick).first():
+    if not User.query.filter_by(nick=new_nick).first() and len(new_nick) >= 3:
         message = "{} has changed their nick to: {}".format(sender.nick, new_nick)
         sender.nick = new_nick
         db.session.add(sender)
