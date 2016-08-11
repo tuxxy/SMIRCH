@@ -134,6 +134,7 @@ def view_topic(sender):
 
 
 def set_nick(sender, message):
+    new_nick = ""
     if len(message) >= 2:
         new_nick = re.sub('[^A-Za-z0-9_-]+', '', message[1]).lower()
     check_user = User.query.filter_by(nick=new_nick).first()
